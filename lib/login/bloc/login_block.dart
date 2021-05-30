@@ -16,12 +16,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     } else if (event is LoginButtonPressed) {
       yield LoginLoadingState();
       var data = await repo.login(event.phoneNumber, event.password);
-      // if (data['data']['id'] != null) {
-      //   pref.setString("token", data['data']['token']);
-      //   pref.setString('email', data['data']['email']);
-      //   pref.setString('phone', data['data']['phone']);
-      //   yield UserLoginSucessState();
-      // }
       print(data);
       yield UserLoginSucessState();
     } else

@@ -16,7 +16,7 @@ class _LoginViewState extends State<LoginView> {
 
   final _formKey = GlobalKey<FormState>();
 
-  late LoginBloc loginBloc;
+  LoginBloc loginBloc;
 
   final msg = BlocBuilder<LoginBloc, LoginState>(
     builder: (context, state) {
@@ -86,7 +86,7 @@ class _LoginViewState extends State<LoginView> {
         hintText: "Phone Number",
       ),
       validator: (value) {
-        if (value!.isEmpty) {
+        if (value.isEmpty) {
           return "Requird";
         } else if (value.length < 13) {
           return "Not Valid Number";
@@ -104,7 +104,7 @@ class _LoginViewState extends State<LoginView> {
         hintText: "Password",
       ),
       validator: (value) {
-        if (value!.isEmpty)
+        if (value.isEmpty)
           return "Required";
         else if (value.length < 6) {
           return "week password";
@@ -116,7 +116,7 @@ class _LoginViewState extends State<LoginView> {
   Widget _loginButton() {
     return ElevatedButton(
       onPressed: () {
-        if (_formKey.currentState!.validate()) {
+        if (_formKey.currentState.validate()) {
           loginBloc.add(
             LoginButtonPressed(
               phoneNumber.text,
