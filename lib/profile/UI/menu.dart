@@ -29,7 +29,7 @@ class _MenuState extends State<Menu> {
               child: Column(
                 children: [
                   header(),
-                  listtile('App Language', 'assets/language.png'),
+                  listtile('App Language', 'assets/contact.png'),
                   SizedBox(
                     height: 15,
                   ),
@@ -37,11 +37,11 @@ class _MenuState extends State<Menu> {
                   SizedBox(
                     height: 15,
                   ),
-                  listtile('Privacy Policy', 'assets/privacy.png'),
+                  listtile('Privacy Policy', 'assets/contact.png'),
                   SizedBox(
                     height: 15,
                   ),
-                  listtile('Terms Of Use', 'assets/terms.png'),
+                  listtile('Terms Of Use', 'assets/contact.png'),
                   Expanded(
                     child: Align(
                       alignment: FractionalOffset.bottomCenter,

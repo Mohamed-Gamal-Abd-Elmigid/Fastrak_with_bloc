@@ -2,11 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test_bloc/profile/bloc/profile_bloc.dart';
 import 'package:test_bloc/profile/bloc/profile_event.dart';
 import 'package:test_bloc/profile/bloc/profile_state.dart';
+import 'package:test_bloc/profile/repo/profile_model.dart';
+import 'package:test_bloc/profile/repo/profile_repo.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -21,26 +24,25 @@ class _ProfileState extends State<Profile> {
 
   var _blankFocusNode = new FocusNode();
 
-  ProfileBloc profileBloc;
-
   String token;
+  User user;
 
   getPref() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     token = sharedPreferences.getString('token');
   }
 
-  // final msg = BlocBuilder<ProfileBloc, ProfileState>(
-  //   builder: (context, state) {
-  //     if (state is ErrorChangeUserData) {
-  //       return Text(state.message);
-  //     } else if (state is UserSaveChangesSucessState) {
-  //       return Center(
-  //         child: CircularProgressIndicator(),
-  //       );
-  //     }
-  //   },
-  // );
+  ProfileBloc profileBloc;
+
+  final msg = BlocBuilder<ProfileBloc, ProfileState>(
+    builder: (context, state) {
+      if (state is ProfileInitialState) {
+        return Text('init State Here From New One');
+      } else if (state is UserSaveChangesSucessState) {
+        return Text('User Did It Perfect Bro');
+      }
+    },
+  );
 
   @override
   void initState() {
@@ -52,18 +54,17 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: BlocListener<ProfileBloc, ProfileState>(
-        listener: (context, state) {
-          if (state is UserSaveChangesSucessState) {
-            print('Bloc Work Nime');
-          }
-        },
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: appBar(),
-          body: GestureDetector(
+    return Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: appBar(),
+        body: BlocListener<ProfileBloc, ProfileState>(
+          listener: (context, state) {
+            if (state is UserSaveChangesSucessState) {
+              user = state.profile;
+              print('Hello From Pressing The Save Changes');
+            }
+          },
+          child: GestureDetector(
             onTap: () {
               FocusScope.of(context).requestFocus(_blankFocusNode);
             },
@@ -144,17 +145,18 @@ class _ProfileState extends State<Profile> {
                             SizedBox(
                               height: 20,
                             ),
-                            buildContainer('First Name'),
-                            buildContainer('Last Name'),
-                            buildContainer('Company Name (Optional)'),
+                            buildContainer('First Name', '${user.firstName}'),
+                            buildContainer('Last Name', '${user.lastName}'),
+                            buildContainer('Company Name (Optional)',
+                                '${user.companyName}'),
                             tiile(
                               'Email Address',
-                              'user_name@gmail.com',
+                              '${user.email}',
                             ),
                             SizedBox(
                               height: 20,
                             ),
-                            tiile('Mobile Number', '+201033103360'),
+                            tiile('Mobile Number', '${user.phone}'),
                             SizedBox(
                               height: 20,
                             ),
@@ -173,8 +175,18 @@ class _ProfileState extends State<Profile> {
                   )),
             ),
           ),
-        ),
-      ),
+        ));
+  }
+
+  toast() {
+    Fluttertoast.showToast(
+      msg: "Sucess",
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.black,
+      textColor: Colors.white,
+      fontSize: 16.0,
     );
   }
 
@@ -285,7 +297,7 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  Widget buildContainer(String lab) {
+  Widget buildContainer(String lab, String txt) {
     return Column(
       children: [
         Container(
@@ -309,7 +321,7 @@ class _ProfileState extends State<Profile> {
           padding: EdgeInsets.symmetric(horizontal: 15),
           alignment: Alignment.centerLeft,
           child: Text(
-            'First Name',
+            txt,
             style: TextStyle(
               color: Colors.black,
             ),
@@ -473,6 +485,8 @@ class _ProfileState extends State<Profile> {
       height: MediaQuery.of(context).size.height / 14,
       child: ElevatedButton(
         onPressed: () {
+          // ProfileBloc.get(context).add(
+          //   SaveProfileChanges(token),
           profileBloc.add(
             SaveProfileChanges(token),
           );

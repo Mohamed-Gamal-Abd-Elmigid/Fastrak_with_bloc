@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test_bloc/profile/UI/dashbord.dart';
 import 'package:test_bloc/profile/UI/menu.dart';
 import 'package:test_bloc/profile/UI/order.dart';
 import 'package:test_bloc/profile/UI/profile.dart';
+import 'package:test_bloc/profile/bloc/profile_bloc.dart';
+import 'package:test_bloc/profile/bloc/profile_state.dart';
+import 'package:test_bloc/profile/repo/profile_repo.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -11,21 +15,26 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int currentIndex = 2;
+  int currentIndex = 0;
   final tabs = [
     Order(),
     Dashbord(),
-    // Profile(),
-    Dashbord(),
+    Profile(),
     Menu(),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: tabs[currentIndex],
-      bottomNavigationBar: bottomNavigator(),
+    return BlocProvider(
+      create: (BuildContext context) => ProfileBloc(
+        ProfileInitialState(),
+        ProfileRepo(),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: tabs[currentIndex],
+        bottomNavigationBar: bottomNavigator(),
+      ),
     );
   }
 
